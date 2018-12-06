@@ -3,19 +3,19 @@ Java/Android library for input/output of Embroidery file types.
 
 Ensure jitpack.io in your root build.gradle at the end of repositories:
 ```
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
 	}
+}
 ```
 
 Step 2. Add the dependency.
 ```
-  dependencies {
-	        implementation 'com.github.EmbroidePy:EmbroideryIO:0.0.1'
-	}
+dependencies {
+	implementation 'com.github.EmbroidePy:EmbroideryIO:0.0.1'
+}
   ```
   
 And you now how effective, correct, and properly working EmbroideryIO for java/android.
@@ -110,6 +110,25 @@ Pyembroidery will read:
 
 API
 ---
+
+The EmbroideryIO class has a variety of static functions that are how the interfacing should be done.
+
+```
+    public static void writeEmbroidery(EmbPattern pattern, Writer writer, OutputStream out) throws IOException
+    public static void writeStream(EmbPattern pattern, String path, OutputStream out, Object... settings) throws IOException
+    public static void write(EmbPattern pattern, String path, Object... settings) throws IOException
+    public static EmbPattern readEmbroidery(Reader reader, InputStream in) throws IOException
+    public static EmbPattern readStream(String path, InputStream out, Object... settings) throws IOException
+    public static EmbPattern read(String path, Object... settings) throws IOException
+    public static String getExtentionByFileName(String name)'
+    public static EmbroideryIO.Reader getReaderByFilename(String filename)
+    public static EmbroideryIO.Writer getWriterByFilename(String filename)
+```
+
+Something like ``EmbPattern pattern = EmbroideryIO.read("myfile.dst")`` will load that embroidery file.
+
+There's also, `Object... settings` parameters that are permitted and parallel those in pyembroidery.
+
 
 The parameters currently have recognized values for:
 * `max_stitch`
