@@ -2,6 +2,7 @@ package org.embroideryio.embroideryio;
 
 import java.io.IOException;
 
+
 public class JefReader extends EmbReader {
 
     public void read_jef_stitches() throws IOException {
@@ -20,7 +21,12 @@ public class JefReader extends EmbReader {
             float y = -b[1];
             switch (ctrl) {
                 case 0x02:
-                    pattern.move(x, y);
+                    if ((x == 0) && (y == 0)) {
+                        pattern.trim();
+                    }
+                    else {
+                        pattern.move(x, y);
+                    }
                     continue;
                 case 0x01:
                     pattern.color_change();

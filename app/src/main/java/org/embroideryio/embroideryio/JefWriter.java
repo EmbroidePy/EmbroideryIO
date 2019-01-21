@@ -3,6 +3,8 @@ package org.embroideryio.embroideryio;
 import static org.embroideryio.embroideryio.EmbConstant.*;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class JefWriter extends EmbWriter {
 
@@ -22,21 +24,24 @@ public class JefWriter extends EmbWriter {
 
     @Override
     public void write() throws IOException {
+        boolean trims = getBoolean("trims", true);
+
+        Date date = new Date();
+        String date_string = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
+        date_string = (String) get("date", date_string);
+
         Points stitches = pattern.getStitches();
 
         pattern.fixColorCount();
         int color_count = pattern.getThreadlist().size();
-        byte b[] = new byte[4];
 
         int offsets = 0x74 + (color_count * 8);
-        writeInt32(offsets);
-        writeInt32(0x14);
-        //TODO: replace this with valid time.
-        //'%Y%m%d%H%M%S'
-        write(String.format("20122017218088").getBytes());
+        writeInt32LE(offsets);
+        writeInt32LE(0x14);
+        write(date_string.getBytes());
         writeInt8(0x00);
         writeInt8(0x00);
-        writeInt32(color_count);
+        writeInt32LE(color_count);
         int point_count = 1; // 1 command for END;
         for (int i = 0, ie = stitches.size(); i < ie; i++) {
             int data = stitches.getData(i) % COMMAND_MASK;
@@ -46,28 +51,33 @@ public class JefWriter extends EmbWriter {
                     continue;
                 case JUMP:
                     point_count += 2;
-                    break;
+                    continue;
+                case TRIM:
+                    if (trims) {
+                        point_count += 2;
+                    }
+                    continue;
                 case COLOR_CHANGE:
                     point_count += 2;
-                    break;
+                    continue;
                 case END:
                     break;
             }
         }
-        writeInt32(point_count);
+        writeInt32LE(point_count);
         float[] bounds = pattern.getBounds();
         int design_width = (int) (bounds[2] - bounds[0]);
         int design_height = (int) (bounds[3] - bounds[1]);
 
-        writeInt32(get_jef_hoop_size(design_width, design_height));
+        writeInt32LE(get_jef_hoop_size(design_width, design_height));
 
         int half_width = (int) Math.rint(design_width / 2.0);
         int half_height = (int) Math.rint(design_height / 2.0);
         /* Distance from center of Hoop */
-        writeInt32(half_width); // left
-        writeInt32(half_height); // top
-        writeInt32(half_width); // right
-        writeInt32(half_height); // bottom
+        writeInt32LE(half_width); // left
+        writeInt32LE(half_height); // top
+        writeInt32LE(half_width); // right
+        writeInt32LE(half_height); // bottom
 
         /* Distance from default 110 x 110 Hoop */
         int x_hoop_edge = 550 - half_width;
@@ -92,10 +102,10 @@ public class JefWriter extends EmbWriter {
         EmbThread[] threadSet = EmbThreadJef.getThreadSet();
         for (EmbThread thread : pattern.threadlist) {
             int thread_index = EmbThread.findNearestIndex(thread.color, threadSet);
-            writeInt32(thread_index);
+            writeInt32LE(thread_index);
         }
         for (int i = 0; i < color_count; i++) {
-            writeInt32(0x0D);
+            writeInt32LE(0x0D);
         }
 
         double xx = 0, yy = 0;
@@ -126,6 +136,12 @@ public class JefWriter extends EmbWriter {
                     writeInt8(-dy);
                     continue;
                 case TRIM:
+                    if (trims) {
+                        writeInt8(0x80);
+                        writeInt8(0x02);
+                        writeInt8(0);
+                        writeInt8(0);
+                    }
                     continue;
                 case END:
                     break;
