@@ -1,8 +1,5 @@
-
 package org.embroideryio.embroideryio;
 
-//the below starts with two slashes for oracle java. 1 for android.
-/*//
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 
@@ -28,6 +25,7 @@ public class EmbMatrix extends AffineTransform {
         try {
             this.invert();
         } catch (NoninvertibleTransformException ex) {
+          throw new RuntimeException(ex);
         }
     }
 
@@ -44,11 +42,3 @@ public class EmbMatrix extends AffineTransform {
     }
 
 }
-/*/
-
-import android.graphics.Matrix;
-
-public class EmbMatrix extends Matrix {
-    
-}
-//*/

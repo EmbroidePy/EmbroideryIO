@@ -1,23 +1,7 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-buildscript {
-    
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.1'
-    }
-}
-
 allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
+  version = "0.0.4"
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+subprojects {
+  apply plugin: 'maven'
 }
