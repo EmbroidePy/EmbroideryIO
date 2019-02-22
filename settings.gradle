@@ -1,1 +1,2 @@
-include ':app'
+include 'embroideryio-jvm'
+include 'embroideryio-android'

@@ -1,7 +1,7 @@
 # EmbroideryIO
 Java/Android library for input/output of Embroidery file types.
 
-Ensure jitpack.io in your root build.gradle at the end of repositories:
+Ensure the jitpack.io repository is included in your root build.gradle:
 ```
 allprojects {
 	repositories {
@@ -14,13 +14,11 @@ allprojects {
 Step 2. Add the dependency.
 ```
 dependencies {
-	implementation 'com.github.EmbroidePy:EmbroideryIO:0.0.3'
+	implementation 'com.github.EmbroidePy.EmbroideryIO:embroideryio-jvm:0.0.4' // use embroideryio-android for android
 }
   ```
   
 And you now how effective, correct, and properly working EmbroideryIO for java/android.
-
-If being used for Oracle Java, there is a single character in the EmbMatrix file that needs to be changed to switch between the andoid Matrix class and the Java AffineTransformation class.
 
 Introduction
 ---
