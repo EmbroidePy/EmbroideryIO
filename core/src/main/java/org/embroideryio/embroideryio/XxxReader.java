@@ -30,16 +30,18 @@ public class XxxReader extends EmbReader {
                     pattern.move(signed8(b3), -signed8(b4));
                     continue;
                 case 0x03:
+                    pattern.trim();
                     int x = signed8(b3);
                     int y = -signed8(b4);
                     if ((x != 0) || (y != 0)) pattern.move(x, y);
-                    pattern.trim();
                     continue;
                 case 0x08:
                     pattern.color_change();
                     continue;
                 case 0x7F:
                     break;
+                default:
+                    continue;
             }
             break;
         }
