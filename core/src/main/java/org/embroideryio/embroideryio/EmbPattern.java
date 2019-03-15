@@ -256,7 +256,97 @@ public class EmbPattern implements Points {
         keywords = map.get(PROP_KEYWORDS);
         comments = map.get(PROP_COMMENTS);
     }
-
+    
+    /*
+    * Gets pattern with jumps within sewn command blocks removed,
+    * only counting the needle hits as valid points. Optional trim added if
+    * beyond acceptable limit.
+    */
+    public EmbPattern get_pattern_needle_hits() {
+        return get_pattern_needle_hits(Integer.MAX_VALUE);
+    }
+    
+    public EmbPattern get_pattern_needle_hits(int jumps_to_require_trim){
+        EmbPattern new_pattern = new EmbPattern();
+        int i = -1;
+        int ie = stitches.size() - 1;
+        int count = 0;
+        boolean trimmed = true;
+        while (i < ie) {
+            i += 1;
+            int command = stitches.getData(i) & COMMAND_MASK;
+            if ((command == STITCH) || (command == SEQUIN_EJECT))
+                trimmed = false;
+            else if ((command == COLOR_CHANGE) || (command == NEEDLE_SET) || (command == TRIM))
+                trimmed = true;
+            
+            if ((trimmed) || (command != JUMP)) {
+                new_pattern.add(stitches.getX(i),stitches.getY(i),  stitches.getData(i));
+                continue;
+            }
+            
+            while ((i < ie) && (command == JUMP)) { //skip all jumps.
+                i += 1;
+                command = stitches.getData(i) & COMMAND_MASK;
+                count += 1;
+            }
+            if (command != JUMP)
+                i -= 1; //overshot, go back a step.
+            
+            if (count >= jumps_to_require_trim) {
+                new_pattern.trim(); //jumped beyond limit.
+                trimmed = true;
+            }
+            count = 0;
+            //Stitched jumps are simply omitted.
+        }
+        new_pattern.threadlist.addAll(threadlist);
+        new_pattern.setMetadata(this);
+        return new_pattern;
+    }
+    
+    /*
+    * Gets pattern with jumps combined into a single jump, and trim added if beyond
+    * jump limit. For DST this tends to be required.
+    */
+    public EmbPattern get_pattern_interpolate_trim(int jumps_to_require_trim){
+        EmbPattern new_pattern = new EmbPattern();
+        int i = -1;
+        int ie = stitches.size() - 1;
+        int count = 0;
+        boolean trimmed = true;
+        while (i < ie) {
+            i += 1;
+            int command = stitches.getData(i) & COMMAND_MASK;
+            if ((command == STITCH) || (command == SEQUIN_EJECT))
+                trimmed = false;
+            else if ((command == COLOR_CHANGE) || (command == NEEDLE_SET) || (command == TRIM))
+                trimmed = true;
+            
+            if ((trimmed) || (command != JUMP)) {
+                new_pattern.add(stitches.getX(i),stitches.getY(i),  stitches.getData(i));
+                continue;
+            }
+            
+            while ((i < ie) && (command == JUMP)) { //skip all jumps.
+                i += 1;
+                command = stitches.getData(i) & COMMAND_MASK;
+                count += 1;
+            }
+            if (command != JUMP)
+                i -= 1; //overshot, go back a step.
+            
+            if (count >= jumps_to_require_trim) {
+                new_pattern.trim(); //jumped beyond limit.
+            }
+            count = 0;
+            new_pattern.add(stitches.getX(i),stitches.getY(i),  stitches.getData(i));
+        }
+        new_pattern.threadlist.addAll(threadlist);
+        new_pattern.setMetadata(this);
+        return new_pattern;
+    }
+    
     public Iterable<StitchBlock> asStitchBlock() {
         return new Iterable<StitchBlock>() {
             @Override
