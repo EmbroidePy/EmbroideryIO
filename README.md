@@ -11,10 +11,19 @@ allprojects {
 }
 ```
 
-Step 2. Add the dependency.
+Step 2. Add the dependency, for Android:
+
 ```
 dependencies {
-	implementation 'com.github.EmbroidePy.EmbroideryIO:embroideryio-jvm:0.0.4' // use embroideryio-android for android
+	implementation 'com.github.EmbroidePy.EmbroideryIO:embroideryio-android:0.0.5'
+}
+```
+
+For JVM.
+
+```
+dependencies {
+	implementation 'com.github.EmbroidePy.EmbroideryIO:embroideryio-jvm:0.0.5'
 }
   ```
   
