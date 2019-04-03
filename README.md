@@ -15,7 +15,7 @@ Step 2. Add the dependency, for Android:
 
 ```
 dependencies {
-	implementation 'com.github.EmbroidePy.EmbroideryIO:embroideryio-android:0.0.5'
+	implementation 'com.github.EmbroidePy.EmbroideryIO:embroideryio-android:0.0.6'
 }
 ```
 
@@ -23,7 +23,7 @@ For JVM.
 
 ```
 dependencies {
-	implementation 'com.github.EmbroidePy.EmbroideryIO:embroideryio-jvm:0.0.5'
+	implementation 'com.github.EmbroidePy.EmbroideryIO:embroideryio-jvm:0.0.6'
 }
   ```
   
