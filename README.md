@@ -27,16 +27,16 @@ dependencies {
 }
   ```
   
-And you now how effective, correct, and properly working EmbroideryIO for java/android.
+And you should now have an effective, correct, and properly working EmbroideryIO for java/android.
 
 Introduction
 ---
 
-Everything is a honest transcription of pyembroidery ( https://github.com/EmbroidePy/pyembroidery ) and uses the same scheme internally, so most of the functionality from there is present here with minor changes due to language differences.  It does not include format-wise it does not include gcode, png, svg, or txt.
+Everything is a honest transcription of pyembroidery ( https://github.com/EmbroidePy/pyembroidery ) and uses the same scheme internally, so most of the functionality from there is present here with minor changes due to language differences.  It does not include gcode, png, svg, or txt.
 
 Any suggestions or comments please raise an issue on the github.
 
-EmbroiderIO was ported from pyembroidery, both done by the same original author with all projects in mind. It includes a lot of higher level and middle level pattern composition abilities, and should accounts for any knowable error. It should be highly robust with a simple api so as to be reasonable for *any* java embroidery project.
+EmbroiderIO was ported from pyembroidery, both originally done by the same primary author with all projects in mind. It includes a lot of higher level and middle level pattern composition abilities, and should accounts for any knowable error. It should be highly robust with a simple api so as to be reasonable for *any* java embroidery project.
 
 It should be complex enough to go very easily from points to stitches, fine grained enough to let you control everything, and good enough that you shouldn't want to.
 
