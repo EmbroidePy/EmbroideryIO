@@ -133,15 +133,16 @@ public class PecReader extends EmbReader {
             if (val1 == Integer.MIN_VALUE) {
                 break;
             }
+            if (val1 == 0xFF) {// && val2 == 0x00) {
+                break; //End command.
+            }
             val2 = readInt8();
             if (val2 == Integer.MIN_VALUE) {
                 break;
             }
-
+          
             int code = (val1 << 8) | val2;
-            if (val1 == 0xFF) {// && val2 == 0x00) {
-                break; //End command.
-            }
+
             if (val1 == 0xFE && val2 == 0xB0) {
                 skip(1);
                 pattern.color_change();
