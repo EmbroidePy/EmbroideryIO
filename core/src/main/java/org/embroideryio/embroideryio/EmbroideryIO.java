@@ -93,7 +93,7 @@ public class EmbroideryIO {
         return null;
     }
 
-    public static String getExtentionByFileName(String name) {
+    public static String getExtensionByFileName(String name) {
         if (name == null) {
             return null;
         }
@@ -105,7 +105,7 @@ public class EmbroideryIO {
     }
 
     public static EmbroideryIO.Reader getReaderByFilename(String filename) {
-        String ext = getExtentionByFileName(filename);
+        String ext = getExtensionByFileName(filename);
         if (ext == null) {
             return null;
         }
@@ -215,7 +215,7 @@ public class EmbroideryIO {
     }
 
     public static EmbroideryIO.Writer getWriterByFilename(String filename) {
-        String ext = getExtentionByFileName(filename);
+        String ext = getExtensionByFileName(filename);
         if (ext == null) {
             return null;
         }
