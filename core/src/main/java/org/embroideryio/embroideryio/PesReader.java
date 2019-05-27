@@ -90,7 +90,7 @@ public class PesReader extends PecReader {
         pattern.setAuthor(Author);
         int keywordsStringLength = readInt8();
         String keywords = readString(keywordsStringLength);
-        pattern.setAuthor(keywords);
+        pattern.setKeywords(keywords);
         int commentsStringLength = readInt8();
         String Comments = readString(commentsStringLength);
         pattern.setComments(Comments);
