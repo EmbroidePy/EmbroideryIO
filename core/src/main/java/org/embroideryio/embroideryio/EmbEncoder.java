@@ -159,11 +159,11 @@ public class EmbEncoder {
                     current = getSequence(change_sequence, lookahead_index);
                     lookahead_index += 1;
                 } else {
-                    current = getSequence(change_sequence, lookahead_index);
+                    current = getSequence(change_sequence, order);
                 }
             } else {
                 current = getSequence(change_sequence, current_index);
-                if (current_index > lookahead_index) {
+                if (current_index >= lookahead_index) {
                     lookahead_index = current_index + 1;
                 }
             }

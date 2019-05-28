@@ -7,15 +7,15 @@ import static org.embroideryio.embroideryio.EmbConstant.*;
 
 public class EmbFunctions {
 
-    static int encode_thread_change(int command, Integer thread) {
+    public static int encode_thread_change(int command, Integer thread) {
         return encode_thread_change(command, thread, null, null);
     }
 
-    static int encode_thread_change(int command, Integer thread, Integer needle) {
+    public static int encode_thread_change(int command, Integer thread, Integer needle) {
         return encode_thread_change(command, thread, needle, null);
     }
 
-    static int encode_thread_change(int command, Integer thread, Integer needle, Integer order) {
+    public static int encode_thread_change(int command, Integer thread, Integer needle, Integer order) {
         if (thread == null) {
             thread = 0;
         } else {
@@ -38,7 +38,7 @@ public class EmbFunctions {
         return command | (order << 24) | (needle << 16) | (thread << 8);
     }
 
-    static final Integer[] decode_embroidery_command(int command) {
+    public static final Integer[] decode_embroidery_command(int command) {
         Integer flag = command & COMMAND_MASK;
         Integer thread = command & THREAD_MASK;
         thread >>= 8;

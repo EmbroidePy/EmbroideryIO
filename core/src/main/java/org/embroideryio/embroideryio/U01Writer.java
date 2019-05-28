@@ -118,7 +118,8 @@ public class U01Writer extends EmbWriter {
                     continue;
                 case NEEDLE_SET:
                     int needle = stitches.getData(i) & NEEDLE_MASK;
-                    needle <<= 16;
+                    needle >>= 16;
+                    needle -= 1;
                     if (needle >= 15) {
                         needle = (needle % 15) + 1;
                     }
