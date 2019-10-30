@@ -21,7 +21,7 @@ public class JefWriter extends EmbWriter {
     public static final int HOOP_140X200 = 2;
     public static final int HOOP_126X110 = 3;
     public static final int HOOP_200X200 = 4;
-
+    public static final int HOOP_200X280 = 5;
     @Override
     public void write() throws IOException {
         boolean trims = getBoolean("trims", true);
@@ -42,29 +42,53 @@ public class JefWriter extends EmbWriter {
         writeInt8(0x00);
         writeInt8(0x00);
         writeInt32LE(color_count);
-        int point_count = 1; // 1 command for END;
+        int point_count = 0; // 1 command for END;
+        double xx1 = 0, yy1 = 0;
         for (int i = 0, ie = stitches.size(); i < ie; i++) {
-            int data = stitches.getData(i) % COMMAND_MASK;
+            int data = stitches.getData(i) & COMMAND_MASK;
+            float xe = stitches.getX(i);
+            float ye = stitches.getY(i);
+            int dxe = (int) Math.rint(xe - xx1);
+            int dye = (int) Math.rint(ye - yy1);
+            xx1 += dxe;
+            yy1 += dye;
             switch (data) {
                 case STITCH:
                     point_count += 1;
+                    point_count += 1;
+                    continue;
+                case STOP:
+                case COLOR_CHANGE:
+                    point_count += 1;
+                    point_count += 1;
+                    point_count += 1;
+                    point_count += 1;
                     continue;
                 case JUMP:
-                    point_count += 2;
+                    point_count += 1;
+                    point_count += 1;
+                    point_count += 1;
+                    point_count += 1;
                     continue;
                 case TRIM:
                     if (trims) {
-                        point_count += 2;
+                        point_count += 1;
+                        point_count += 1;
+                        point_count += 1;
+                        point_count += 1;
                     }
-                    continue;
-                case COLOR_CHANGE:
-                    point_count += 2;
                     continue;
                 case END:
                     break;
             }
+            break;
         }
-        writeInt32LE(point_count);
+        point_count += 1;
+        point_count += 1;
+
+
+
+        writeInt32LE(point_count/2);
         float[] bounds = pattern.getBounds();
         int design_width = (int) (bounds[2] - bounds[0]);
         int design_height = (int) (bounds[3] - bounds[1]);
@@ -178,6 +202,9 @@ public class JefWriter extends EmbWriter {
         }
         if (width < 2000 && height < 2000) {
             return HOOP_200X200;
+        }
+        if (width < 2000 && height < 2800) {
+            return HOOP_200X280;
         }
         return HOOP_110X110;
     }
