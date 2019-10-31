@@ -25,11 +25,11 @@ public class JefWriter extends EmbWriter {
     @Override
     public void write() throws IOException {
         boolean trims = getBoolean("trims", true);
-
+        
         Date date = new Date();
         String date_string = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
         date_string = (String) get("date", date_string);
-
+        
         Points stitches = pattern.getStitches();
 
         pattern.fixColorCount();
@@ -42,29 +42,33 @@ public class JefWriter extends EmbWriter {
         writeInt8(0x00);
         writeInt8(0x00);
         writeInt32LE(color_count);
-        int point_count = 1; // 1 command for END;
+        
+        int command_count = 1; // 1 command for END;
         for (int i = 0, ie = stitches.size(); i < ie; i++) {
-            int data = stitches.getData(i) % COMMAND_MASK;
+            int data = stitches.getData(i) & COMMAND_MASK;
             switch (data) {
                 case STITCH:
-                    point_count += 1;
+                    command_count += 1;
+                    continue;
+                case STOP:
+                case COLOR_CHANGE:
+                    command_count += 2;
                     continue;
                 case JUMP:
-                    point_count += 2;
+                    command_count += 2;
                     continue;
                 case TRIM:
                     if (trims) {
-                        point_count += 2;
+                        command_count += 2;
                     }
-                    continue;
-                case COLOR_CHANGE:
-                    point_count += 2;
                     continue;
                 case END:
                     break;
             }
+            break;
         }
-        writeInt32LE(point_count);
+        writeInt32LE(command_count);
+
         float[] bounds = pattern.getBounds();
         int design_width = (int) (bounds[2] - bounds[0]);
         int design_height = (int) (bounds[3] - bounds[1]);
