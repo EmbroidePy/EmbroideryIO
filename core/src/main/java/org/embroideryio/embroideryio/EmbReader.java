@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public abstract class EmbReader extends ReadHelper implements EmbroideryIO.Reader {
 
-    EmbPattern pattern;
+    protected EmbPattern pattern;
     HashMap<String, Object> settings = new HashMap<>();
 
     @Override
