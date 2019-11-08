@@ -620,6 +620,14 @@ public class EmbPattern implements Points {
     public float getMaxY() {
         return stitches.getMaxY();
     }
+    
+    public float getCurrentY() {
+        return _previousY;
+    }
+    
+    public float getCurrentX() {
+        return _previousX;
+    }
 
     public void fixColorCount() {
         int threadIndex = 0;
