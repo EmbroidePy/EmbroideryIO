@@ -118,6 +118,8 @@ public class EmbroideryIO {
                 return new BroReader();
             case "col":
                 return new ColReader();
+            case "csd":
+                return new CsdReader();
             case "csv":
                 return new CsvReader();
             case "dat":
