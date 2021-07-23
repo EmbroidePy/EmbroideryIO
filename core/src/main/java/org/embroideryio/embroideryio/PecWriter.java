@@ -197,9 +197,11 @@ public class PecWriter extends EmbWriter {
             yy += dy;
             switch (data) {
                 case STITCH:
-                    if ((jumping) && (dx != 0) && (dy != 0)) {
-                        writeInt8((byte) 0x00);
-                        writeInt8((byte) 0x00);
+                    if (jumping) {
+                        if ((dx != 0) && (dy != 0)) {
+                            writeInt8((byte) 0x00);
+                            writeInt8((byte) 0x00);
+                        }
                         jumping = false;
                     }
                     if (dx < 63 && dx > -64 && dy < 63 && dy > -64) {
