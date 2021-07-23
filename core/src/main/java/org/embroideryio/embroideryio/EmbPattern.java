@@ -974,6 +974,8 @@ public class EmbPattern implements Points {
             case "f00":
             case "f01":
                 return new FxyReader();
+            case "hus":
+                return new HusReader();
             case "inb":
                 return new InbReader();
             case "inf":

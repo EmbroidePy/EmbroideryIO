@@ -50,6 +50,10 @@ public class EmbThread {
         this.catalogNumber = catalogNumber;
     }
 
+    public EmbThread(String hex) {
+        this.color = EmbThread.parseHex(hex);
+    }
+    
     public EmbThread(int red, int green, int blue, String description, String catalogNumber) {
         this.color = newColor(red,green,blue);
         this.description = description;
