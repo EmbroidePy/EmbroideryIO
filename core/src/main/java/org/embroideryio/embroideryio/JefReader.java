@@ -6,6 +6,7 @@ import java.io.IOException;
 public class JefReader extends EmbReader {
 
     public void read_jef_stitches() throws IOException {
+        int color_index = 1;
         byte[] b = new byte[2];
         while (true) {
             if (readFully(b) != b.length) break;
@@ -29,7 +30,15 @@ public class JefReader extends EmbReader {
                     }
                     continue;
                 case 0x01:
-                    pattern.color_change();
+                    
+                    if (pattern.threadlist.get(color_index) == null) {
+                        pattern.stop();
+                        pattern.threadlist.remove(color_index);
+                    }
+                    else {
+                        pattern.color_change();
+                        color_index += 1;
+                    }
                     continue;
                 case 0x10:
                     break;
@@ -48,7 +57,13 @@ public class JefReader extends EmbReader {
         skip(88);
         for (int i = 0; i < count_colors; i++) {
             int index = Math.abs(readInt32LE());
-            pattern.add(jefThread[index % jefThread.length]);
+            if (index == 0) {
+                // If we have color 0. Go ahead and set that to None.
+                pattern.threadlist.add(null);
+            }
+            else {
+                pattern.add(jefThread[index % jefThread.length]);
+            }
         }
         seek(stitch_offset);
         read_jef_stitches();
