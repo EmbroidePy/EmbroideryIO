@@ -197,7 +197,7 @@ public class EmbCompress {
         ByteBuffer output_data = ByteBuffer.allocate(uncompressed_size);
         block_elements = -1;
         int bits_total = input_data.array().length * 8;
-        while ((bits_total > bit_position) && (uncompressed_size == -1) || (output_data.array().length <= uncompressed_size)){
+        while ((bits_total > bit_position) && ((uncompressed_size == -1) || (output_data.array().length <= uncompressed_size))) {
             int character = get_token();
             if (character <= 255) {  //# literal.
                 output_data.put((byte) character);
@@ -264,6 +264,7 @@ public class EmbCompress {
                         int[] old_table = table;
                         int[] new_table = Arrays.copyOf(old_table, old_table.length + size);
                         Arrays.fill(new_table, old_table.length, new_table.length, len_index);
+                        table = new_table;
                     }
                 }
             }
