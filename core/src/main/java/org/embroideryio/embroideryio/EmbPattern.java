@@ -1042,8 +1042,7 @@ public class EmbPattern implements Points {
                 //return InbWriter();
                 break;
             case "inf":
-                //return new InfWriter();
-                break;
+                return new InfWriter();
             case "jef":
                 return new JefWriter();
             case "jpx":
