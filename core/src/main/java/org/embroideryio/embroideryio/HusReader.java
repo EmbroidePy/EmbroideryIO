@@ -52,7 +52,7 @@ public class HusReader  extends EmbReader {
         ByteBuffer x_decompressed = EmbCompress.expand(ByteBuffer.wrap(x_bytes), number_of_stitches);
         
         seek(y_offset);
-        byte[] y_bytes = new byte[100000]; //readfully
+        byte[] y_bytes = this.stream.readAllBytes(); //readfully
         readFully(y_bytes);
         ByteBuffer y_decompressed = EmbCompress.expand(ByteBuffer.wrap(y_bytes), number_of_stitches);
         
@@ -61,30 +61,36 @@ public class HusReader  extends EmbReader {
                         command_decompressed.capacity(), x_decompressed.capacity()
                 ), y_decompressed.capacity());
 
+        OUTER:
         for (int i = 0; i < stitch_count; i++) {
-            int cmd = command_decompressed.get(i);
-            int x = signed8(x_decompressed.get(i));
-            int y = -signed8(y_decompressed.get(i));
-            if (cmd == 0x80) {  //# STITCH
-                pattern.stitch(x, y);
-            }
-            else if (cmd == 0x81) { //  # JUMP
-                pattern.move(x, y);
-            }
-            else if (cmd == 0x84) { //  # COLOR_CHANGE
-                pattern.color_change(x, y);
-            }
-            else if (cmd == 0x88) { //# TRIM
-                if ((x != 0) || (y != 0)) {
+            int cmd = (int)(command_decompressed.get(i) & 0xFF);
+            int x = signed8((int)(x_decompressed.get(i) & 0xFF));
+            int y = -signed8((int)(y_decompressed.get(i) & 0xFF));
+            switch (cmd) {
+                case 0x80:
+                    //# STITCH
+                    pattern.stitch(x, y);
+                    break;
+                case 0x81:
+                    //  # JUMP
                     pattern.move(x, y);
-                }
-                pattern.trim();
-            }
-            else if (cmd == 0x90) { // # END
-                break;
-            }
-            else {  //# UNMAPPED COMMAND
-                break;
+                    break;
+                case 0x84:
+                    //  # COLOR_CHANGE
+                    pattern.color_change(x, y);
+                    break;
+                case 0x88:
+                    //# TRIM
+                    if ((x != 0) || (y != 0)) {
+                        pattern.move(x, y);
+                    }   pattern.trim();
+                    break;
+                case 0x90:
+                    // # END
+                    break OUTER;
+                default:
+                    //# UNMAPPED COMMAND
+                    break OUTER;
             }
         }
         pattern.end();
