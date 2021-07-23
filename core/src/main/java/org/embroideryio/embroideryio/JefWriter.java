@@ -4,6 +4,9 @@ import static org.embroideryio.embroideryio.EmbConstant.*;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 
 public class JefWriter extends EmbWriter {
@@ -25,16 +28,59 @@ public class JefWriter extends EmbWriter {
     @Override
     public void write() throws IOException {
         boolean trims = getBoolean("trims", true);
-        
+
         Date date = new Date();
         String date_string = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
         date_string = (String) get("date", date_string);
-        
+
         Points stitches = pattern.getStitches();
 
         pattern.fixColorCount();
-        int color_count = pattern.getThreadlist().size();
-
+        
+        EmbThreadJef[] jef_threads = EmbThreadJef.getThreadSet();
+        int last_index = -1;
+        EmbThread last_thread = null;
+        ArrayList<Integer> palette = new ArrayList<>();
+        
+        boolean color_toggled = false;
+        int color_count = 0;  // Color and Stop count.
+        int index_in_threadlist = 0;
+        stitches = pattern.getStitches();
+        for (int i = 0, s = stitches.size(); i < s; i++) {
+            //Iterate all stitches.
+            int flags = stitches.getData(i) & COMMAND_MASK;
+            if ((flags == COLOR_CHANGE) || (index_in_threadlist == 0)) {
+                // If color change *or* initial color unset.
+                EmbThread thread = pattern.threadlist.get(index_in_threadlist);
+                index_in_threadlist += 1;
+                color_count += 1;
+                int index_of_jefthread = EmbThread.findNearestColorIndex(thread.getColor(), Arrays.asList(jef_threads));
+                if ((last_index == index_of_jefthread) && (last_thread != thread)) {
+                    //Last thread and current thread pigeonhole to same jefcolor.
+                    //We set that thread to None. And get the second closest color.
+                    EmbThreadJef repeated_thread = jef_threads[index_of_jefthread];
+                    int repeated_index = index_of_jefthread;
+                    jef_threads[index_of_jefthread] = null;
+                    index_of_jefthread = EmbThread.findNearestColorIndex(thread.getColor(), Arrays.asList(jef_threads));
+                    jef_threads[repeated_index] = repeated_thread;
+                }
+                palette.add(index_of_jefthread);
+                last_index = index_of_jefthread;
+                last_thread = thread;
+                color_toggled = false;
+            }
+            if (flags == STOP) {
+                color_count += 1;
+                color_toggled = !color_toggled;
+                if (color_toggled) {
+                    palette.add(0);
+                }
+                else {
+                    palette.add(last_index);
+                }
+            }
+        }
+        
         int offsets = 0x74 + (color_count * 8);
         writeInt32LE(offsets);
         writeInt32LE(0x14);
@@ -42,7 +88,7 @@ public class JefWriter extends EmbWriter {
         writeInt8(0x00);
         writeInt8(0x00);
         writeInt32LE(color_count);
-        
+
         int command_count = 1; // 1 command for END;
         for (int i = 0, ie = stitches.size(); i < ie; i++) {
             int data = stitches.getData(i) & COMMAND_MASK;
@@ -68,7 +114,7 @@ public class JefWriter extends EmbWriter {
             break;
         }
         writeInt32LE(command_count);
-
+        
         float[] bounds = pattern.getBounds();
         int design_width = (int) (bounds[2] - bounds[0]);
         int design_height = (int) (bounds[3] - bounds[1]);
@@ -103,11 +149,10 @@ public class JefWriter extends EmbWriter {
         y_hoop_edge = 1000 - half_height;
         write_hoop_edge_distance(x_hoop_edge, y_hoop_edge);
 
-        EmbThread[] threadSet = EmbThreadJef.getThreadSet();
-        for (EmbThread thread : pattern.threadlist) {
-            int thread_index = EmbThread.findNearestIndex(thread.color, threadSet);
-            writeInt32LE(thread_index);
+        for (Integer t : palette) {
+            writeInt32LE(t);
         }
+        
         for (int i = 0; i < color_count; i++) {
             writeInt32LE(0x0D);
         }
