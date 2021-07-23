@@ -802,7 +802,7 @@ public class EmbPattern implements Points {
         if ((dx != 0) || (dy != 0)) {
             addStitchAbs(dx, dy, MATRIX_TRANSLATE);
         }
-        if ((sx != 0) || (sy != 0)) {
+        if ((sx != 1) || (sy != 1)) {
             addStitchAbs(sx, sy, MATRIX_SCALE);
         }
         if ((rotate != 0)) {
