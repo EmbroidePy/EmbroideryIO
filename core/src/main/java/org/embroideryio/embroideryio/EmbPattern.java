@@ -1009,6 +1009,8 @@ public class EmbPattern implements Points {
             case "dat":
                 //return new DatWriter();
                 break;
+            case "edr":
+                return new EdrWriter();
             case "dsb":
                 //return new DsbWriter();
                 break;
