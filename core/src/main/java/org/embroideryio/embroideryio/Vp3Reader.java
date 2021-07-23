@@ -41,6 +41,9 @@ public class Vp3Reader extends EmbReader {
         int count_colors = readInt16BE();
         for (int i = 0; i < count_colors; i++) {
             vp3_read_colorblock(center_x, center_y);
+            if ((i + 1) < count_colors) { // Don't add color change on final read
+                pattern.color_change();
+            }
         }
     }
 
@@ -86,12 +89,10 @@ public class Vp3Reader extends EmbReader {
             } else if (y == 0x02) {
                 //end of long stitch mode.
             } else if (y == 0x03) {
-                pattern.end();
-                return;
+                pattern.trim();
             }
         }
-        pattern.trim();
-        pattern.color_change();
+        
     }
 
     EmbThread vp3_read_thread() throws IOException {

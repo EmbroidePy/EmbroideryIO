@@ -233,13 +233,19 @@ public class Vp3Writer extends EmbWriter {
             float y = stitches.getY(i);
             int flags = stitches.getData(i) & COMMAND_MASK;
             if (flags == END) {
+                // This is a trim command. The machine does not autotrim.
+                // consequently writers tend to add this explicit trim command
                 writeInt8(0x80);
                 writeInt8(0x03);
                 break;
             }
             switch (flags) {
-                case COLOR_CHANGE:
                 case TRIM:
+                    writeInt8(0x80);
+                    writeInt8(0x03);
+                    continue;
+                case COLOR_CHANGE:
+                    // colorchange commands divided the patterns into colorblocks
                 case STOP:
                 case JUMP: //vp3.jump == vp3.stitch, combine.
                     continue;
