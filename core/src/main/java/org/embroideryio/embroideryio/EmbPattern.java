@@ -775,6 +775,65 @@ public class EmbPattern implements Points {
         }
     }
 
+    public void addPattern(EmbPattern pattern) {
+        addPattern(pattern, 0, 0, 1, 1, 0);
+    }
+    
+    /**
+     * add_pattern merges the given pattern with the current pattern. It accounts for some edge conditions but
+     * not all of them.
+
+     * If there is an end command on the current pattern, that is removed.
+     * If the color ending the current pattern is equal to the color starting the next those color blocks are merged.
+     * Any prepended thread change command to the merging pattern is suppressed.
+     * 
+     * @param pattern Pattern to be added to current pattern.
+     * @param dx position change of the added pattern x
+     * @param dy position change of the added pattern y
+     * @param sy scale of the added pattern x
+     * @param sx scale of the added pattern y
+     * @param rotate rotation of the added pattern
+     */
+    public void addPattern(EmbPattern pattern, float dx, float dy, float sx, float sy, float rotate) {
+        
+        if (stitches.getData(stitches.size()-1) == END) {
+            stitches.remove(stitches.size()-1);  // Remove END, if exists
+        }
+        if ((dx != 0) || (dy != 0)) {
+            addStitchAbs(dx, dy, MATRIX_TRANSLATE);
+        }
+        if ((sx != 0) || (sy != 0)) {
+            addStitchAbs(sx, sy, MATRIX_SCALE);
+        }
+        if ((rotate != 0)) {
+            addStitchAbs(rotate, rotate, MATRIX_ROTATE);
+        }
+        //Add the new thread, only if it's different from the last one
+        this.fixColorCount();
+
+        if (pattern.threadlist.size() > 0) {
+            if (pattern.threadlist.get(0) == threadlist.get(threadlist.size()-1)) {
+                threadlist.addAll(pattern.threadlist.subList(1, pattern.threadlist.size()));
+            }
+            else {
+                threadlist.addAll(pattern.threadlist);
+                color_change();
+            }
+        }
+        int join_position = stitches.size();
+        stitches.addAll(pattern.stitches);
+
+        for (int i = join_position, s = stitches.size(); i < s; i++) {
+            int data = stitches.getData(i) & COMMAND_MASK;
+            if ((data == STITCH) || (data == SEW_TO) || (data == NEEDLE_AT)) {
+                break;
+            }
+            else if ((data == COLOR_CHANGE) || (data == COLOR_BREAK) || (data == NEEDLE_SET)) {
+                stitches.setData(i, NO_COMMAND);
+            }
+        }
+        //self.extras.update(pattern.extras);
+    }
     
     public static void setSettings(BaseIO obj, Object... settings) {
         for (int i = 0, ie = settings.length; i < ie; i += 2) {
