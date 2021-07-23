@@ -18,15 +18,19 @@ public class PesReader extends PecReader {
         switch (signature) {
             case "#PES0100":
                 pattern.setMetadata(PROP_VERSION, Float.toString(10));
+                readPESHeaderV10();
                 break;
             case "#PES0090":
                 pattern.setMetadata(PROP_VERSION, Float.toString(9));
+                readPESHeaderV9();
                 break;
             case "#PES0080":
                 pattern.setMetadata(PROP_VERSION, Float.toString(8));
+                readPESHeaderV8();
                 break;
             case "#PES0070":
                 pattern.setMetadata(PROP_VERSION, Float.toString(7));
+                readPESHeaderV7();
                 break;
             case "#PES0060":
                 pattern.setMetadata(PROP_VERSION, Float.toString(6));
@@ -165,7 +169,151 @@ public class PesReader extends PecReader {
         }
         seek(pecStart);
     }
+    
+    public void readPESHeaderV7() throws IOException {
+        int pecStart = readInt32LE();
+        skip(4);
+        readDescriptions();
+        skip(36);
+        int fromImageStringLength = readInt8();
+        String fromImageString = readString(fromImageStringLength);
+        if (fromImageString.length() != 0) {
+            pattern.setMetadata("image_file", fromImageString);
+        }
+        skip(24);
+        int numberOfProgrammableFillPatterns = readInt16LE();
+        if (numberOfProgrammableFillPatterns != 0) {
+            seek(pecStart);
+            return;
+        }
+        int numberOfMotifPatterns = readInt16LE();
+        if (numberOfMotifPatterns != 0) {
+            seek(pecStart);
+            return;
+        }
+        int featherPatternCount = readInt16LE();
+        if (featherPatternCount != 0) {
+            seek(pecStart);
+            return;
+        }
+        int numberOfColors = readInt16LE();
+        for (int i = 0; i < numberOfColors; i++) {
+            readThread();
+        }
+        seek(pecStart);
+    }
+    
+    public void readPESHeaderV8() throws IOException {
+        int pecStart = readInt32LE();
+        skip(4);
+        readDescriptions();
+        skip(38);
+        int fromImageStringLength = readInt8();
+        String fromImageString = readString(fromImageStringLength);
+        if (fromImageString.length() != 0) {
+            pattern.setMetadata("image_file", fromImageString);
+        }
+        skip(26);
+        int numberOfProgrammableFillPatterns = readInt16LE();
+        if (numberOfProgrammableFillPatterns != 0) {
+            seek(pecStart);
+            return;
+        }
+        int numberOfMotifPatterns = readInt16LE();
+        if (numberOfMotifPatterns != 0) {
+            seek(pecStart);
+            return;
+        }
+        int featherPatternCount = readInt16LE();
+        if (featherPatternCount != 0) {
+            seek(pecStart);
+            return;
+        }
+        int numberOfColors = readInt16LE();
+        for (int i = 0; i < numberOfColors; i++) {
+            readThread();
+        }
+        seek(pecStart);
+    }
 
+    public void readPESHeaderV9() throws IOException {
+        int pecStart = readInt32LE();
+        skip(4);
+        readDescriptions();
+        skip(14);
+        int hoopNameStringLength = readInt8();
+        String hoopNameString = readString(hoopNameStringLength);
+        if (hoopNameString.length() != 0) {
+            pattern.setMetadata("hoop_name", hoopNameString);
+        }
+        skip(30);
+        int fromImageStringLength = readInt8();
+        String fromImageString = readString(fromImageStringLength);
+        if (fromImageString.length() != 0) {
+            pattern.setMetadata("image_file", fromImageString);
+        }
+        skip(34);
+        int numberOfProgrammableFillPatterns = readInt16LE();
+        if (numberOfProgrammableFillPatterns != 0) {
+            seek(pecStart);
+            return;
+        }
+        int numberOfMotifPatterns = readInt16LE();
+        if (numberOfMotifPatterns != 0) {
+            seek(pecStart);
+            return;
+        }
+        int featherPatternCount = readInt16LE();
+        if (featherPatternCount != 0) {
+            seek(pecStart);
+            return;
+        }
+        int numberOfColors = readInt16LE();
+        for (int i = 0; i < numberOfColors; i++) {
+            readThread();
+        }
+        seek(pecStart);
+    }
+
+    public void readPESHeaderV10() throws IOException {
+        int pecStart = readInt32LE();
+        skip(4);
+        readDescriptions();
+        skip(14);
+        int hoopNameStringLength = readInt8();
+        String hoopNameString = readString(hoopNameStringLength);
+        if (hoopNameString.length() != 0) {
+            pattern.setMetadata("hoop_name", hoopNameString);
+        }
+        skip(38);
+        int fromImageStringLength = readInt8();
+        String fromImageString = readString(fromImageStringLength);
+        if (fromImageString.length() != 0) {
+            pattern.setMetadata("image_file", fromImageString);
+        }
+        skip(34);
+        int numberOfProgrammableFillPatterns = readInt16LE();
+        if (numberOfProgrammableFillPatterns != 0) {
+            seek(pecStart);
+            return;
+        }
+        int numberOfMotifPatterns = readInt16LE();
+        if (numberOfMotifPatterns != 0) {
+            seek(pecStart);
+            return;
+        }
+        int featherPatternCount = readInt16LE();
+        if (featherPatternCount != 0) {
+            seek(pecStart);
+            return;
+        }
+        int numberOfColors = readInt16LE();
+        for (int i = 0; i < numberOfColors; i++) {
+            readThread();
+        }
+        seek(pecStart);
+    }
+    
     public void readThread() throws IOException {
         int color_code_length = readInt8();
         String color_code = readString(color_code_length);
