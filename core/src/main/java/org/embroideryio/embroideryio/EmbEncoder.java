@@ -48,11 +48,12 @@ public class EmbEncoder {
     private float needle_y = 0;
     private float stitch_x = 0;
     private float stitch_y = 0;
+    private int high_flags = 0;
 
     public EmbEncoder() {
     }
 
-    public void setDefaultIO(EmbroideryIO.BaseIO io) {
+    public void setDefaultIO(EmbPattern.BaseIO io) {
         this.encode = (boolean) io.get(PROP_ENCODE, encode);
         this.max_stitch = (float) io.get(PROP_MAX_STITCH, max_stitch);
         this.max_jump = (float) io.get(PROP_MAX_JUMP, max_jump);
@@ -238,6 +239,7 @@ public class EmbEncoder {
             }
             data = source.getData(i);
             flags = data & COMMAND_MASK;
+            high_flags = data & FLAGS_MASK;
             switch (flags) {
                 case NO_COMMAND:
                     continue;
@@ -438,7 +440,10 @@ public class EmbEncoder {
     }
 
     void add_thread_change(Integer command, Integer thread, Integer needle, Integer order) {
-        add(EmbFunctions.encode_thread_change(command, thread, needle, order));
+        float x = needle_x;
+        float y = needle_y;
+        int cmd = EmbFunctions.encode_thread_change(command, thread, needle, order);
+        add(cmd, x, y);
     }
 
     void add(int command) {
@@ -731,7 +736,6 @@ public class EmbEncoder {
     }
 
     void interpolate_gap_stitches(float x0, float y0, float x1, float y1, float max_length, int data) {
-        Points transcode = destination_pattern.getStitches();
         double distance_x = x1 - x0;
         double distance_y = y1 - y0;
         if ((Math.abs(distance_x) > max_length) || (Math.abs(distance_y) > max_length)) {
@@ -756,7 +760,7 @@ public class EmbEncoder {
                 qy += step_size_y;
                 float x = Math.round(qx);
                 float y = Math.round(qy);
-                add(data, x, y);
+                add(data | high_flags, x, y);
                 update_needle_position(x, y);
             }
         }

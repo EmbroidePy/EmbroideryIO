@@ -5,6 +5,8 @@ public class EmbConstant {
     public static final int THREAD_MASK = 0xFF00;
     public static final int NEEDLE_MASK = 0xFF0000;
     public static final int ORDER_MASK = 0xFF000000;
+    
+    public static final int FLAGS_MASK = 0x0000FF00;
 
     public static final int NO_COMMAND = -1;
     public static final int STITCH = 0;
@@ -57,4 +59,6 @@ public class EmbConstant {
     public static final int CONTINGENCY_SEQUIN_JUMP = 0xF6;
     public static final int CONTINGENCY_SEQUIN_STITCH = 0xF7;
     public static final int CONTINGENCY_SEQUIN_REMOVE = 0xF8;
+    
+    public static final int ALTERNATIVE = 0x100;
 }
