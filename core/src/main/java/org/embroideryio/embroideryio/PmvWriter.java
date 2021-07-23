@@ -127,14 +127,14 @@ public class PmvWriter extends EmbWriter {
     }
 
     private void write_length_lookup_table(int length_range) throws IOException {
-        //I've not solved this for how they are actually made, writing a something that should work.
         int[] write_values = new int[]{
             0, 0, 10, 71, 20, 143, 40, 214, 60, 286, 80, 357,
             100, 429, 120, 500, 140, 571, 160, 714, 180, 786, 200, 857,
             250, 1000, 300, 1286, 350, 1429, 400, 1571, 450, 1786, 500, 2000
         };
-        writeInt8(12);
-        int steps = write_values.length / 2;
+        
+        int steps = write_values.length;
+        writeInt8(steps-1); // # (500,2000)
         writeInt8(steps);
         for (int i = 0, ie = write_values.length; i < ie; i += 2) {
             int length_at_step = write_values[i];
