@@ -72,7 +72,7 @@ public class PmvWriter extends EmbWriter {
             }
             int data = pattern.getData(i) & COMMAND_MASK;
             float x = pattern.getX(i);
-            float y = pattern.getY(i);
+            float y = -pattern.getY(i);
             x *= scale_x;
             y -= center_y;
             y *= scale_y;
@@ -82,10 +82,10 @@ public class PmvWriter extends EmbWriter {
             if (data != STITCH && data != JUMP) {
                 continue;
             }
-            if (int_x > int_max_x) {
+            if (xx > int_max_x) {
                 int_max_x = int_x;
             }
-            if (int_x < int_min_x) {
+            if (xx < int_min_x) {
                 int_min_x = int_x;
             }
             if (int_y > int_max_y) {
@@ -119,7 +119,7 @@ public class PmvWriter extends EmbWriter {
         write_length_lookup_table(length_range);
         int width_range = int_max_y - int_min_y;
         write_width_lookup_table(width_range);
-        writeInt16LE(0x12);
+        writeInt16LE(0x12); // (250,1000)
         write(new byte[]{
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -145,18 +145,18 @@ public class PmvWriter extends EmbWriter {
     }
 
     private void write_width_lookup_table(int width_range) throws IOException {
-        int pos = width_range / 2;
-        writeInt8(pos);
         if (width_range == 0) {
+            writeInt8(0);
             writeInt8(1);
             writeInt16LE(8192);
             writeInt16LE(1000);
             return;
         }
         int steps = 15;
-        writeInt8(steps);
         double second_max = 28000.0 / ((float) width_range);
         double second_step = second_max / ((float) steps - 1);
+        writeInt8(steps-1);
+        writeInt8(steps);
         for (int i = 0; i < steps; i++) {
             int width_at_step = 50 * i;
             int other_at_step = (int) Math.rint(second_step * i);

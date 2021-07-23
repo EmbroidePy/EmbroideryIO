@@ -25,7 +25,7 @@ public class PmvReader extends EmbReader {
                     x = -(64 - x); // 6 bit signed number.
                 }
                 x *= 2.5;
-                y *= 2.5;
+                y -= 2.5;
                 int dx = x;
                 pattern.stitchAbs(px + x, y);
                 px += dx;
