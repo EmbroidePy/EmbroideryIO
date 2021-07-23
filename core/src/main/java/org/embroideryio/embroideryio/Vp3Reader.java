@@ -45,6 +45,7 @@ public class Vp3Reader extends EmbReader {
                 pattern.color_change();
             }
         }
+        pattern.end();
     }
 
     void vp3_read_colorblock(float center_x, float center_y) throws IOException {
@@ -66,6 +67,8 @@ public class Vp3Reader extends EmbReader {
         int stitch_byte_length = block_end_position - tell();
         byte[] stitch_bytes = new byte[stitch_byte_length];
         if (readFully(stitch_bytes) != stitch_bytes.length) return;
+        
+        boolean trimmed = false;
         int i = 0;
         while (i < stitch_byte_length - 1) {
             int x = stitch_bytes[i];
@@ -73,6 +76,7 @@ public class Vp3Reader extends EmbReader {
             i += 2;
             if ((x & 0xFF) != 0x80) {
                 pattern.stitch(x, y);
+                trimmed = false;
                 continue;
             }
             if (y == 0x01) {
@@ -81,15 +85,21 @@ public class Vp3Reader extends EmbReader {
                 y = signed16(stitch_bytes[i], stitch_bytes[i + 1]);
                 i += 2;
                 if ((Math.abs(x) > 255) || (Math.abs(y) > 255)) {
-                    pattern.trim();
+                    if (!trimmed) {
+                        pattern.trim();
+                    }
                     pattern.move(x, y);
+                    trimmed = true;
                 } else {
                     pattern.stitch(x, y);
                 }
             } else if (y == 0x02) {
                 //end of long stitch mode.
             } else if (y == 0x03) {
-                pattern.trim();
+                if (!trimmed) {
+                    pattern.trim();
+                }
+                trimmed = true;
             }
         }
         

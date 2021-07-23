@@ -232,6 +232,7 @@ public class Vp3Writer extends EmbWriter {
             float x = stitches.getX(i);
             float y = stitches.getY(i);
             int flags = stitches.getData(i) & COMMAND_MASK;
+            int alt = stitches.getData(i) & FLAGS_MASK;
             if (flags == END) {
                 // This is a trim command. The machine does not autotrim.
                 // consequently writers tend to add this explicit trim command
@@ -258,7 +259,7 @@ public class Vp3Writer extends EmbWriter {
                 continue;
             }
             if ((-127 < dx) && (dx < 127)
-                    && (-127 < dy) && (dy < 127)) {
+                    && (-127 < dy) && (dy < 127) && (alt == 0)) {
                 writeInt8(dx);
                 writeInt8(dy);
             } else {
