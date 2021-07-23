@@ -1002,8 +1002,7 @@ public class EmbPattern implements Points {
                 //return new BroWriter();
                 break;
             case "col":
-                //return new ColWriter();
-                break;
+                return new ColWriter();
             case "csv":
                 return new CsvWriter();
             case "dat":
