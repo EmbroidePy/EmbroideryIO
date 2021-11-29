@@ -5,10 +5,10 @@ package org.embroideryio.embroideryio;
  * <p>
  * Used for direct subsequence values delegating to the backing implementation.
  *
- * @param <E>
+ * @param <E> Points type to index to a range
  */
 
-class PointsIndexRange<E extends Points> implements Points {
+public class PointsIndexRange<E extends Points> implements Points {
 
     public static final int INVALID_POINT = -1;
     protected E list;

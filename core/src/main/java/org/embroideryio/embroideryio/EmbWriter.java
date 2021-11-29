@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import static org.embroideryio.embroideryio.EmbConstant.*;
 
-public abstract class EmbWriter extends WriteHelper implements EmbroideryIO.Writer {
+public abstract class EmbWriter extends WriteHelper implements EmbPattern.Writer {
 
     protected EmbPattern pattern;
     HashMap<String, Object> settings = new HashMap<>();

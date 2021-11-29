@@ -33,8 +33,6 @@ public class JefWriter extends EmbWriter {
         String date_string = new SimpleDateFormat("yyyyMMddHHmmss").format(date);
         date_string = (String) get("date", date_string);
 
-        Points stitches = pattern.getStitches();
-
         pattern.fixColorCount();
         
         EmbThreadJef[] jef_threads = EmbThreadJef.getThreadSet();
@@ -45,7 +43,7 @@ public class JefWriter extends EmbWriter {
         boolean color_toggled = false;
         int color_count = 0;  // Color and Stop count.
         int index_in_threadlist = 0;
-        stitches = pattern.getStitches();
+        Points stitches = pattern.getStitches();
         for (int i = 0, s = stitches.size(); i < s; i++) {
             //Iterate all stitches.
             int flags = stitches.getData(i) & COMMAND_MASK;

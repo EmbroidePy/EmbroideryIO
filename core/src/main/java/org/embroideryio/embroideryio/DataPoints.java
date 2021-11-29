@@ -10,7 +10,7 @@ import java.util.Arrays;
  * Points Direct extension with integer data attached at a 1:1 connection to the points.
  */
 
-class DataPoints extends PointsDirect {
+public class DataPoints extends PointsDirect {
     public int[] data;
 
     public DataPoints() {
