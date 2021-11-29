@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-public abstract class EmbReader extends ReadHelper implements EmbroideryIO.Reader {
+public abstract class EmbReader extends ReadHelper implements EmbPattern.Reader {
 
-    protected EmbPattern pattern;
+    EmbPattern pattern;
     HashMap<String, Object> settings = new HashMap<>();
 
     @Override

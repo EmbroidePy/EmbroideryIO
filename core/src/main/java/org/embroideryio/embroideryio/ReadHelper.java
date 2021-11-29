@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public abstract class ReadHelper implements EmbroideryIO.Reader {
+public abstract class ReadHelper implements EmbPattern.Reader {
 
     private byte[] BYTE4 = new byte[4];
     private byte[] BYTE3 = new byte[3];

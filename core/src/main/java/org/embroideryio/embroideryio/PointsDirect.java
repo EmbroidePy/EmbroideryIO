@@ -4,37 +4,25 @@ import java.util.Arrays;
 
 /**
  * Created by Tat on 8/2/2015.
- * <p>
+ * 
  * Sequential float array backed implementation of Points.
  * Serves as a array of points stored as two sequential floats.
- * <p>
+ * 
  * Maintains bounds.
- * <p>
+ * 
  * Derived from proprietary code, 6/21/2016.
  * Released under EmbroiderModder/MobileView licensing. 6/21/2016.
  * Updated 12/6/2017
- * <p>
- * <p/>
+ * 
  * The core importance of such a class is to allow for speed with regard to Android.
  * The canvas can very quickly render segments and with the system setup as such,
  * A point list can be rendered in two canvas calls, and the underlying memory is
  * maximally compact.
- * <p>
- * <p/>
- * if (count >= 4) {
- * if ((count & 2) != 0) {
- * canvas.drawLines(pointlist, 0, count - 2, paint);
- * canvas.drawLines(pointlist, 2, count - 2, paint);
- * } else {
- * canvas.drawLines(pointlist, 0, count, paint);
- * canvas.drawLines(pointlist, 2, count - 4, paint);
- * }
- * }
- * <p/>
+ * 
  * This class can easily allow for 50,000+ stitch projects to be run with proper speed on an android device.
  */
 
-class PointsDirect implements Points {
+public class PointsDirect implements Points {
     public static final int MIN_CAPACITY_INCREMENT = 12;
     public static final int INVALID_POINT = -1;
 
@@ -397,7 +385,7 @@ class PointsDirect implements Points {
         dirtybounds = false;
     }
 
-//ANDORID:
+//ANDROID:
 //    public void transform(Matrix matrix) {
 //        matrix.mapPoints(pointlist);
 //        dirtybounds = true;
@@ -429,4 +417,38 @@ class PointsDirect implements Points {
         pointlist[index + 1] = Float.NaN;
     }
 
+    public double distanceBetweenIndex(int p0, int p1) {
+        return Math.sqrt(distanceSqBetweenIndex(p0, p1));
+    }
+
+    public double distanceBetweenIndex(int p0, double x, double y) {
+        return Math.sqrt(distanceSqBetweenIndex(p0, x, y));
+    }
+
+    private double distanceSqBetweenIndex(int p0, double x, double y) {
+        float x0 = getX(p0);
+        float y0 = getY(p0);
+        return distanceSq(x0, y0, x, y);
+    }
+
+    double distanceSqBetweenIndex(int p0, int p1) {
+        if (p0 == p1) return 0;
+        int size = size();
+        if (p0 >= size || p1 >= size || p0 < 0 || p1 < 0) return 0;
+        float x0 = getX(p0);
+        float y0 = getY(p0);
+
+        float x1 = getX(p1);
+        float y1 = getY(p1);
+
+        return distanceSq(x0, y0, x1, y1);
+    }
+    
+    public static double distanceSq(double x0, double y0, double x1, double y1) {
+        double dx = x1 - x0;
+        double dy = y1 - y0;
+        dx *= dx;
+        dy *= dy;
+        return dx + dy;
+    }
 }
