@@ -52,7 +52,7 @@ public class HusReader  extends EmbReader {
         ByteBuffer x_decompressed = EmbCompress.expand(ByteBuffer.wrap(x_bytes), number_of_stitches);
         
         seek(y_offset);
-        byte[] y_bytes = this.stream.readAllBytes(); //readfully
+        byte[] y_bytes = readAllBytes(); //readfully
         readFully(y_bytes);
         ByteBuffer y_decompressed = EmbCompress.expand(ByteBuffer.wrap(y_bytes), number_of_stitches);
         

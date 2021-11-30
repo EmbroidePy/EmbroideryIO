@@ -944,8 +944,8 @@ public class EmbPattern implements Points {
                 return new BroReader();
             case "col":
                 return new ColReader();
-            case "csd":
-                return new CsdReader();
+//            case "csd":
+//                return new CsdReader();
             case "csv":
                 return new CsvReader();
             case "dat":

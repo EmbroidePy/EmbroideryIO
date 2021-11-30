@@ -197,7 +197,7 @@ public class EmbCompress {
         ByteBuffer output_data = ByteBuffer.allocate(uncompressed_size);
         block_elements = -1;
         int bits_total = input_data.array().length * 8;
-        while ((bits_total > bit_position) && ((uncompressed_size == -1) || (output_data.array().length <= uncompressed_size))) {
+        while ((bits_total > bit_position) && ((uncompressed_size == -1) || (output_data.position() <= uncompressed_size))) {
             int character = get_token();
             if (character <= 255) {  //# literal.
                 output_data.put((byte) character);
@@ -208,12 +208,11 @@ public class EmbCompress {
             else {
                 int length = character - 253;  //# Min length is 3. 256-253=3.
                 int back = get_position() + 1;
-                int position = output_data.array().length - back;
+                int position = output_data.position() - back;
                 if (back > length){
                     //# Entire lookback is already within output data.
                     output_data.put(Arrays.copyOfRange(output_data.array(), position, position + length));
-                }
-                else {
+                } else {
                     //# Will read & write the same data at some point.
                     for (int i = position, s = position + length; i < s; i++) {
                         output_data.put(output_data.get(i));
