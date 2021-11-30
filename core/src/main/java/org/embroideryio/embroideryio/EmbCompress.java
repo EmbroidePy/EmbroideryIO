@@ -212,11 +212,15 @@ public class EmbCompress {
                 if (back > length){
                     //# Entire lookback is already within output data.
                     output_data.put(Arrays.copyOfRange(output_data.array(), position, position + length));
-                }
-                else {
+                } else {
                     //# Will read & write the same data at some point.
                     for (int i = position, s = position + length; i < s; i++) {
-                        output_data.put(output_data.get(i));
+                        try {
+                            System.out.print(i);
+                            output_data.put(output_data.get(i));
+                        } catch (IndexOutOfBoundsException e) {
+                            System.out.print(e);
+                        }
                     }
                 }
             }

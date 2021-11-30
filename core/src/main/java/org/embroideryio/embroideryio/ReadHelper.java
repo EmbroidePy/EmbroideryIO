@@ -1,5 +1,6 @@
 package org.embroideryio.embroideryio;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -107,6 +108,18 @@ public abstract class ReadHelper implements EmbPattern.Reader {
             readPosition += offset;
         }
         return (read) ? offset : -1;
+    }
+
+    public byte[] readAllBytes() throws IOException {
+        InputStream s = stream;
+        int bufferLength = 1024;
+        byte[] buffer = new byte[bufferLength];
+        int bytesRead;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        while ((bytesRead = s.read(buffer, 0, bufferLength)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        return outputStream.toByteArray();
     }
 
     public static int signed8(int v) {
