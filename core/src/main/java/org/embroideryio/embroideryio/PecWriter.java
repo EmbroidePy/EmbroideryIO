@@ -17,6 +17,8 @@ public class PecWriter extends EmbWriter {
 
     static final int PEC_ICON_WIDTH = 48;
     static final int PEC_ICON_HEIGHT = 38;
+    
+    static final boolean GROUP_LONG = false;
 
     public PecWriter() {
         super();
@@ -132,9 +134,6 @@ public class PecWriter extends EmbWriter {
         writeInt16LE((short) 0x1E0);
         writeInt16LE((short) 0x1B0);
 
-        writeInt16BE((0x9000 | -Math.round(pattern.getMinX())));
-        writeInt16BE((0x9000 | -Math.round(pattern.getMinY())));
-
         pec_encode();
 
         int stitch_block_length = tell() - stitch_block_start_position;
@@ -173,19 +172,28 @@ public class PecWriter extends EmbWriter {
         return value;
     }
 
-    public static int flagJump(int longForm) {
-        return longForm | (JUMP_CODE << 8);
+    private void write_value(int value) throws IOException {
+        write_value(value, false, 0);
     }
-
-    public static int flagTrim(int longForm) {
-        return longForm | (TRIM_CODE << 8);
+    
+    private void write_value(int value, boolean force_long, int flag) throws IOException {
+        if (!force_long && -64 < value && value < 63) {
+            writeInt8(value & MASK_07_BIT);
+        }
+        else {
+            value &= 0b00001111_11111111;
+            value |= 0b10000000_00000000;
+            value |= (flag << 8);
+            writeInt16BE(value);
+        }
     }
-
+    
     private void pec_encode() throws IOException {
         boolean color_two = true;
         Points stitches = pattern.getStitches();
         int dx, dy;
         boolean jumping = false;
+        boolean init = true;
         double xx = 0, yy = 0;
         for (int i = 0, ie = stitches.size(); i < ie; i++) {
             int data = stitches.getData(i) & COMMAND_MASK;
@@ -199,40 +207,44 @@ public class PecWriter extends EmbWriter {
                 case STITCH:
                     if (jumping) {
                         if ((dx != 0) && (dy != 0)) {
-                            writeInt8((byte) 0x00);
-                            writeInt8((byte) 0x00);
+                            write_value(0);
+                            write_value(0);
                         }
                         jumping = false;
                     }
-                    if (dx < 63 && dx > -64 && dy < 63 && dy > -64) {
-                        writeInt8(dx & MASK_07_BIT);
-                        writeInt8(dy & MASK_07_BIT);
-                    } else {
-                        dx = encode_long_form(dx);
-                        dy = encode_long_form(dy);
-                        writeInt16BE(dx);
-                        writeInt16BE(dy);
+                    if (GROUP_LONG && dx < 63 && dx > -64 && dy < 63 && dy > -64) {
+                        write_value(dx, true, 0);
+                        write_value(dy, true, 0);
                     }
+                    else {
+                        write_value(dx);
+                        write_value(dy);
+                    }
+                    init = false;
                     continue;
                 case JUMP:
                     jumping = true;
-                    dx = encode_long_form(dx);
-                    dx = flagTrim(dx);
-                    dy = encode_long_form(dy);
-                    dy = flagTrim(dy);
-                    writeInt16BE(dx);
-                    writeInt16BE(dy);
+                    if (init) {
+                        write_value(dx, true, JUMP_CODE);
+                        write_value(dy, true, JUMP_CODE);
+                    }
+                    else {
+                        write_value(dx, true, TRIM_CODE);
+                        write_value(dy, true, TRIM_CODE);
+                    }
+                    init = false;
                     continue;
                 case COLOR_CHANGE:
                     if (jumping) {
-                        writeInt8((byte) 0x00);
-                        writeInt8((byte) 0x00);
+                        write_value(0);
+                        write_value(0);
                         jumping = false;
                     }
                     writeInt8(0xfe);
                     writeInt8(0xb0);
                     writeInt8((color_two) ? 2 : 1);
                     color_two = !color_two;
+                    init = false;
                     continue;
                 case TRIM:
                     continue;

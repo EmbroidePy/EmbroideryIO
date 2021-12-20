@@ -34,8 +34,9 @@ public class PecReader extends EmbReader {
         skip(0x1D0 - colorChanges);
         int stitch_block_end = readInt24LE() - 5 + tell();
         //The end of this value is 5 into the sttichblock.
-        // 3 bytes, '0x31, 0xff, 0xf0, 6 2-byte shorts. 15 total.
-        skip(0x0F);
+        
+        // 3 bytes, '0x31, 0xff, 0xf0, 4 2-byte shorts. 11 total.
+        skip(0x0B);
         readPecStitches();
         seek(stitch_block_end);
         int byte_size = pec_graphic_byte_stride * pec_graphic_icon_height;
@@ -109,7 +110,6 @@ public class PecReader extends EmbReader {
 
     public void map_pec_colors(byte[] color_bytes) {
         int color_count = color_bytes.length;
-        int color_index = 0;
         if (pattern.threadlist.isEmpty()) {
             //if the threadlist is empty, we are reading a file without header threads.
             process_pec_colors(color_bytes);
