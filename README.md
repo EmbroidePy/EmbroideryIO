@@ -115,6 +115,103 @@ Pyembroidery will read:
 * .csv
 * .emm
 
+
+
+EmbPattern API
+---
+
+The main embroidery object is called EmbPattern and will allow you to perform modications of the pattern. This is what is loaded from a file and what is processed and written to disk upon request.
+
+The pattern object store six strings of meta data. The stitches which consist of float: x, float: y, and int: data values. And the threadlist which is an array of EmbThread objects.
+```
+    public void setMetadata(EmbPattern p)
+    public void setPattern(EmbPattern p)
+    public float getX(int index)
+    public float getY(int index)
+    public void setLocation(int index, float x, float y)
+    public int getData(int index)
+    public int size()
+    public float[] getPointlist()
+    public int[] getData()
+    public Points getPoints()
+    DataPoints getStitches()
+    public String getFilename()
+    public void setFilename(String value)
+    public String getName()
+    public void setName(String name)
+    public String getCategory()
+    public void setCategory(String category)
+    public String getAuthor()
+    public void setAuthor(String author)
+    public String getKeywords()
+    public void setKeywords(String keywords)
+    public String getComments()
+    public void setComments(String comments)
+    public ArrayList<EmbThread> getThreadlist()
+    public void addThread(EmbThread thread)
+    public EmbThread getThread(int index)
+    public EmbThread getRandomThread() {
+    public EmbThread getThreadOrFiller(int index)
+    public EmbThread getLastThread()
+    public int getThreadCount()
+    public boolean isEmpty()
+    public HashMap<String, String> getMetadata()
+    public void setMetadata(String key, String value)
+    public String getMetadata(String data)
+    public EmbPattern get_pattern_needle_hits(int jumps_to_require_trim)
+    public EmbPattern get_pattern_interpolate_trim(int jumps_to_require_trim)
+    public Iterable<StitchBlock> asStitchBlock()
+    public Iterable<StitchBlock> asColorBlock()
+    public List<EmbThread> getUniqueThreadList()
+    public List<EmbThread> getSingletonThreadList()
+    public void translate(float dx, float dy)
+    public void clear()
+    public float[] getBounds()
+    public float getWidth()
+    public float getHeight()
+    public float getMinX()
+    public float getMaxX()
+    public float getMinY()
+    public float getMaxY()
+    public void stitchAbs(float x, float y)
+    public void stitch(float dx, float dy)
+    public void moveAbs(float x, float y)
+    public void move(float dx, float dy)
+    public void color_change(float dx, float dy)
+    public void color_change()
+    public void needle_change(Integer needle, float dx, float dy)
+    public void needle_change(Integer needle)
+    public void trim(float dx, float dy)
+    public void trim()
+    public void sequin_mode(float dx, float dy)
+    public void sequin_mode()
+    public void sequin_eject()
+    public void sequin_eject(float dx, float dy)
+    public void stop(float dx, float dy)
+    public void stop()
+    public void end(float dx, float dy)
+    public void end()
+    public void add(double x, double y, int flag)
+    public void addStitchAbs(float x, float y, int command)
+    public void addStitchRel(float dx, float dy, int flags)
+    public int count_commands(int... commands)
+    public void addBlock(String textColor, float... values)
+    public void addPattern(EmbPattern pattern)
+    public void addPattern(EmbPattern pattern, float dx, float dy, float sx, float sy, float rotate)
+    public static void setSettings(BaseIO obj, Object... settings)
+    public static void writeEmbroidery(EmbPattern pattern, Writer writer, OutputStream out) throws IOException
+    public static void writeStream(EmbPattern pattern, String path, OutputStream out, Object... settings) throws IOException
+    public static void write(EmbPattern pattern, String path, Object... settings) throws IOException
+    public static EmbPattern readEmbroidery(Reader reader, InputStream in) throws IOException
+    public static EmbPattern readStream(String path, InputStream out, Object... settings) throws IOException
+    public static EmbPattern read(String path, Object... settings) throws IOException
+    public static String getExtensionByFileName(String name)
+    public static EmbPattern.Reader getReaderByFilename(String filename)
+    public static Reader getReaderByMime(String mime)
+    public static EmbPattern.Writer getWriterByFilename(String filename)
+```
+
+
 API
 ---
 
